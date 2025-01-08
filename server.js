@@ -35,7 +35,8 @@ app.post('/tradingview-webhook', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3000; // Use the dynamic PORT or fallback to 3000 for local testing
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
