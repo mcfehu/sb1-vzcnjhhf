@@ -10,11 +10,14 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 app.post('/tradingview-webhook', async (req, res) => {
+    console.log('Incoming request:', req.body); // Log the request payload for debugging
+
     try {
         const { symbol, entry, stopLoss, takeProfit } = req.body;
 
         // Validate required fields
         if (!symbol || !entry || !stopLoss || !takeProfit) {
+            console.error('Validation failed:', req.body);
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -28,14 +31,15 @@ app.post('/tradingview-webhook', async (req, res) => {
         // Send to Telegram
         await bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' });
 
+        // Respond to confirm the webhook worked
         res.json({ success: true });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error handling webhook:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-
+// Start the server
 const PORT = process.env.PORT || 3000; // Use the dynamic PORT or fallback to 3000 for local testing
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
